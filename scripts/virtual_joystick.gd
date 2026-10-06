@@ -1,6 +1,4 @@
 extends Control
-class_name VirtualJoystick
-
 signal vector_changed(value: Vector2)
 
 var value: Vector2 = Vector2.ZERO
