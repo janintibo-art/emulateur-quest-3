@@ -26,6 +26,8 @@ var vr_button: Button
 var event_label: Label
 
 func _ready() -> void:
+	# Keep the phone in landscape, including reverse landscape when the device is turned.
+	DisplayServer.screen_set_orientation(DisplayServer.SCREEN_SENSOR_LANDSCAPE)
 	_build_world()
 	_build_player()
 	_build_ui()
@@ -34,7 +36,7 @@ func _ready() -> void:
 	QuestSimulator.gyro_changed.connect(_on_gyro_changed)
 	QuestSimulator.vr_mode_changed.connect(_on_vr_mode_changed)
 	_on_height_changed(QuestSimulator.player_height_m)
-	_set_status("Mode téléphone prêt · tourne le téléphone ou glisse l'écran")
+	_set_status("Mode paysage prêt · gyroscope actif · glisse le côté droit pour regarder")
 
 func _process(delta: float) -> void:
 	_update_keyboard_input()
@@ -168,7 +170,7 @@ func _build_ui() -> void:
 	top.offset_left = 14.0
 	top.offset_top = 14.0
 	top.offset_right = -14.0
-	top.offset_bottom = 92.0
+	top.offset_bottom = 112.0
 	top.add_theme_stylebox_override("panel", _panel_style(Color(0.045, 0.065, 0.105, 0.94), 18))
 	canvas.add_child(top)
 
@@ -180,18 +182,18 @@ func _build_ui() -> void:
 	top.add_child(top_margin)
 
 	var top_row := HBoxContainer.new()
-	top_row.add_theme_constant_override("separation", 12)
+	top_row.add_theme_constant_override("separation", 14)
 	top_margin.add_child(top_row)
 
 	var title := Label.new()
 	title.text = "ÉMULATEUR QUEST 3"
-	title.add_theme_font_size_override("font_size", 28)
+	title.add_theme_font_size_override("font_size", 36)
 	title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	top_row.add_child(title)
 
 	mode_label = Label.new()
 	mode_label.text = "TÉLÉPHONE"
-	mode_label.add_theme_font_size_override("font_size", 17)
+	mode_label.add_theme_font_size_override("font_size", 22)
 	mode_label.modulate = Color(0.38, 0.78, 1.0)
 	mode_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	top_row.add_child(mode_label)
@@ -202,13 +204,15 @@ func _build_ui() -> void:
 
 	fps_label = Label.new()
 	fps_label.text = "0 FPS"
-	fps_label.custom_minimum_size.x = 90.0
+	fps_label.custom_minimum_size.x = 105.0
+	fps_label.add_theme_font_size_override("font_size", 20)
 	fps_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	top_row.add_child(fps_label)
 
 	height_label = Label.new()
 	height_label.text = "1.70 m"
-	height_label.custom_minimum_size.x = 76.0
+	height_label.custom_minimum_size.x = 92.0
+	height_label.add_theme_font_size_override("font_size", 20)
 	height_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	top_row.add_child(height_label)
 
@@ -236,39 +240,39 @@ func _build_ui() -> void:
 	status_label = Label.new()
 	status_label.set_anchors_preset(Control.PRESET_CENTER_TOP)
 	status_label.offset_left = -420.0
-	status_label.offset_top = 108.0
+	status_label.offset_top = 128.0
 	status_label.offset_right = 420.0
-	status_label.offset_bottom = 154.0
+	status_label.offset_bottom = 188.0
 	status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	status_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	status_label.add_theme_font_size_override("font_size", 18)
+	status_label.add_theme_font_size_override("font_size", 23)
 	status_label.add_theme_stylebox_override("normal", _panel_style(Color(0.02, 0.03, 0.05, 0.72), 14))
 	canvas.add_child(status_label)
 
 	event_label = Label.new()
 	event_label.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	event_label.offset_left = -320.0
-	event_label.offset_top = -96.0
-	event_label.offset_right = 320.0
-	event_label.offset_bottom = -34.0
+	event_label.offset_left = -390.0
+	event_label.offset_top = -112.0
+	event_label.offset_right = 390.0
+	event_label.offset_bottom = -36.0
 	event_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	event_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	event_label.text = "Joystick gauche = déplacement · côté droit = regarder"
-	event_label.add_theme_font_size_override("font_size", 17)
+	event_label.add_theme_font_size_override("font_size", 21)
 	event_label.add_theme_stylebox_override("normal", _panel_style(Color(0.03, 0.045, 0.075, 0.78), 14))
 	canvas.add_child(event_label)
 
 	var joystick := VirtualJoystickScript.new()
 	joystick.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
-	joystick.offset_left = 22.0
-	joystick.offset_top = -250.0
-	joystick.offset_right = 242.0
-	joystick.offset_bottom = -30.0
+	joystick.offset_left = 26.0
+	joystick.offset_top = -304.0
+	joystick.offset_right = 302.0
+	joystick.offset_bottom = -28.0
 	joystick.vector_changed.connect(func(v: Vector2): touch_move_input = v)
 	canvas.add_child(joystick)
 
-	_build_controller_panel(canvas, &"left", "MANETTE GAUCHE · X / Y", Vector2(262.0, -248.0), false)
-	_build_controller_panel(canvas, &"right", "MANETTE DROITE · A / B", Vector2(-390.0, -248.0), true)
+	_build_controller_panel(canvas, &"left", "MANETTE GAUCHE · X / Y", Vector2(322.0, -300.0), false)
+	_build_controller_panel(canvas, &"right", "MANETTE DROITE · A / B", Vector2(-470.0, -300.0), true)
 
 func _build_controller_panel(canvas: CanvasLayer, hand: StringName, caption: String, position_hint: Vector2, anchor_right: bool) -> void:
 	var panel := PanelContainer.new()
@@ -279,7 +283,7 @@ func _build_controller_panel(canvas: CanvasLayer, hand: StringName, caption: Str
 	else:
 		panel.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
 		panel.offset_left = position_hint.x
-		panel.offset_right = position_hint.x + 360.0
+		panel.offset_right = position_hint.x + 430.0
 	panel.offset_top = position_hint.y
 	panel.offset_bottom = -28.0
 	panel.add_theme_stylebox_override("panel", _panel_style(Color(0.045, 0.065, 0.105, 0.91), 18))
@@ -299,7 +303,7 @@ func _build_controller_panel(canvas: CanvasLayer, hand: StringName, caption: Str
 	var title := Label.new()
 	title.text = caption
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 17)
+	title.add_theme_font_size_override("font_size", 21)
 	column.add_child(title)
 
 	var actions := GridContainer.new()
@@ -331,7 +335,8 @@ func _build_controller_panel(canvas: CanvasLayer, hand: StringName, caption: Str
 func _add_hold_button(container: Control, caption: String, hand: StringName, action: StringName) -> void:
 	var button := Button.new()
 	button.text = caption
-	button.custom_minimum_size = Vector2(78.0, 46.0)
+	button.custom_minimum_size = Vector2(92.0, 58.0)
+	button.add_theme_font_size_override("font_size", 19)
 	button.button_down.connect(func(): QuestSimulator.set_button(hand, action, true))
 	button.button_up.connect(func(): QuestSimulator.set_button(hand, action, false))
 	container.add_child(button)
@@ -339,7 +344,8 @@ func _add_hold_button(container: Control, caption: String, hand: StringName, act
 func _add_nudge_button(container: Control, caption: String, hand: StringName, delta: Vector3) -> void:
 	var button := Button.new()
 	button.text = caption
-	button.custom_minimum_size = Vector2(50.0, 42.0)
+	button.custom_minimum_size = Vector2(58.0, 52.0)
+	button.add_theme_font_size_override("font_size", 18)
 	button.pressed.connect(func(): _nudge_hand(hand, delta))
 	container.add_child(button)
 
@@ -354,8 +360,8 @@ func _nudge_hand(hand: StringName, delta: Vector3) -> void:
 func _small_button(caption: String) -> Button:
 	var button := Button.new()
 	button.text = caption
-	button.custom_minimum_size = Vector2(96.0, 48.0)
-	button.add_theme_font_size_override("font_size", 15)
+	button.custom_minimum_size = Vector2(116.0, 58.0)
+	button.add_theme_font_size_override("font_size", 19)
 	return button
 
 func _panel_style(color: Color, radius: int) -> StyleBoxFlat:

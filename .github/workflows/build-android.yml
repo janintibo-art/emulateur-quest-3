@@ -10,7 +10,7 @@ permissions:
 
 env:
   GODOT_VERSION: 4.7.2
-  APK_NAME: emulateur_quest_3_v2.apk
+  APK_NAME: emulateur_quest_3_v3.apk
 
 jobs:
   build-android:
@@ -45,7 +45,7 @@ jobs:
       - name: Publier l'APK
         uses: actions/upload-artifact@v4
         with:
-          name: emulateur-quest-3-v2-apk
-          path: build/emulateur_quest_3_v2.apk
+          name: emulateur-quest-3-v3-apk
+          path: build/emulateur_quest_3_v3.apk
           if-no-files-found: error
           retention-days: 30
